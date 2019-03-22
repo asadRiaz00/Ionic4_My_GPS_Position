@@ -1,5 +1,7 @@
 {
   "name": "meriApp",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
