@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { LoadingController } from '@ionic/angular';
-
+import { HelperService } from '../service/helper.service';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -22,40 +21,21 @@ export class HomePage {
   heading: any;
   speed: any;
   timestamp: any;
-  loading: any;
   gpsSync: boolean = true;
+  location: any;
 
 
-  constructor(public loadingCtrl: LoadingController, private geolocation: Geolocation) { }
+  constructor(public helperService: HelperService,  private geolocation: Geolocation) { }
 
   ngOnInit() {
-
+    this.helperService.checkFirstTime();
+    this.helperService.backButtonCustomHandler();
 
   }
-
-  async presentLoading() {
-
-
-    this.loading = await this.loadingCtrl.create({
-      message: 'Waiting for GPS data ',
-    });
-
-
-    this.loading.present();
-  }
-
-  hideLoading() {
-
-    this.loading.dismiss();
-    console.log('khali');
-  }
-
-
-
-
-  getCurrentPosition() {
+getCurrentPosition() {
 
     this.geolocation.getCurrentPosition().then((resp) => {
+    
       this.latitude = resp.coords.latitude;
       this.longitude = resp.coords.longitude;
       this.altitude = resp.coords.altitude;
@@ -64,7 +44,7 @@ export class HomePage {
       this.heading = resp.coords.heading;
       this.speed = resp.coords.speed;
       this.timestamp = new Date(resp.timestamp);
-      this.hideLoading();
+      this.helperService.hideLoading();
 
 
 
@@ -84,24 +64,19 @@ export class HomePage {
   }
 
   buttonOn() {
-    this.presentLoading()
+    this.helperService.presentLoading()
 
     this.getCurrentPosition();
     this.gpsSync = false;
-
-
-    this.watchLocation();
+this.watchLocation();
 
   }
 
   buttonOff() {
     this.gpsSync = true;
     this.stopLocationWatch();
-
-  }
-  async delay(ms: number) {
-    await new Promise(resolve => setTimeout(() => resolve(), ms)).then(() => console.log("fired"));
-  }
+ }
+  
 
 
   //Start location update watch
@@ -141,7 +116,8 @@ export class HomePage {
     this.heading = "";
     this.speed = "";
     this.timestamp = "";
-    
+
 
   }
+
 }
